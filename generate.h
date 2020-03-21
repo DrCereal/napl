@@ -12,6 +12,7 @@ void Emit_Function_Header(char* name, size_t size);
 void Emit_Function_Return(void);
 void Emit_Function_Call(char* name, size_t size);
 void Emit_Return(int value);
+void Emit_Variable(int value);
 
 void Emit_Variable_Init(const char* name, int value);
 

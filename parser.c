@@ -210,7 +210,49 @@ VariableInitialization (void)
   return true;
 }
 
-//<function-call> ::= <Identifier> `()`
+//<variable> ::= <Number>
+bool
+Variable (void)
+{
+  Token* token1 = peek_token();
+  if (token1->token_type != TOKEN_NUMBER)
+    return false;
+  get_token();
+
+  Emit_Variable(token1->number);
+
+  delete_token(token1);
+  return true;
+}
+
+//<var-list> ::= <variable> {`,` <variable>}*
+bool
+VarList (void)
+{
+  if (!Variable())
+    return false;
+
+  for (;;)
+    {
+      Token* comma = peek_token();
+      if (comma->token_type != TOKEN_COMMA)
+        return false;
+      get_token();
+
+      if (!Variable())
+        {
+          error_at_line(0, 0, get_file_name(), comma->line_number, \
+            "expected variable after `,` token");
+          failed = true;
+        }
+
+      delete_token(comma);
+    }
+
+  return true;
+}
+
+//<function-call> ::= <Identifier> `(` {<var-list>}+ `)`
 bool
 FunctionCall (void)
 {
@@ -226,6 +268,8 @@ FunctionCall (void)
       return false;
     }
   get_token();
+
+  VarList();
 
   Token* token3 = get_token();
   if (token3->token_type != TOKEN_PAREN_CLOSE)

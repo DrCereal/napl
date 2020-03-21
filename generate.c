@@ -115,6 +115,33 @@ Emit_Return (int value)
   writestr("ret\n");
 }
 
+static unsigned int current_var_reg = 0;
+
+void
+Emit_Variable (int value)
+{
+  writestr("movq $");
+
+  char str[20];
+  sprintf(str, "%i", value);
+  writestr(str);
+
+  writestr(", %");
+
+  switch (current_var_reg++)
+    {
+      case 0: writestr("rdi"); break;
+      case 1: writestr("rsi"); break;
+      case 2: writestr("rdx"); break;
+      case 3: writestr("rcx"); break;
+      case 4: writestr("r8"); break;
+      case 5: writestr("r9"); break;
+      default:
+        error(-1, 0, "Emit_Variable(): ran out of registers");
+    }
+  writec('\n');
+}
+
 void
 Emit_Variable_Init (const char* name, int value)
 {

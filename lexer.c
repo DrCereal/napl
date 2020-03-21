@@ -70,6 +70,7 @@ restart:
       case ')': char_token(')', TOKEN_PAREN_CLOSE);
       case '{': char_token('{', TOKEN_CURLY_OPEN);
       case '}': char_token('}', TOKEN_CURLY_CLOSE);
+      case ',': char_token(',', TOKEN_COMMA);
       case '\n': line_number++; char_token('\n', TOKEN_NEWLINE);
       case '/':
         if (peekc() == '/')
