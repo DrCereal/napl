@@ -52,6 +52,7 @@ get_token (void)
   //Read character stream and get lexeme with initial guess of type
   //Remove unnecessary whitespace.
   int c;
+restart:
   do
     c = readc();
   while (isspace(c) && c != '\n');
@@ -65,12 +66,21 @@ get_token (void)
       case '+': char_token('+', TOKEN_PLUS);
       case '-': char_token('-', TOKEN_MINUS);
       case '*': char_token('*', TOKEN_ASTERISK);
-      case '/': char_token('/', TOKEN_SLASH);
       case '(': char_token('(', TOKEN_PAREN_OPEN);
       case ')': char_token(')', TOKEN_PAREN_CLOSE);
       case '{': char_token('{', TOKEN_CURLY_OPEN);
       case '}': char_token('}', TOKEN_CURLY_CLOSE);
       case '\n': line_number++; char_token('\n', TOKEN_NEWLINE);
+      case '/':
+        if (peekc() == '/')
+          {
+            while ((c = readc()) != '\n');
+            unreadc(c);
+
+            goto restart;
+          }
+        else
+          char_token('/', TOKEN_SLASH);
       default:
         if (isdigit(c))
           {
