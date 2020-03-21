@@ -5,8 +5,8 @@
 
 enum symbol_type
 {
-  SYMBOL_ORIGINAL,
-  SYMBOL_REFERENCE,
+  SYMBOL_FUNCTION,
+  SYMBOL_VARIABLE,
 };
 
 typedef struct

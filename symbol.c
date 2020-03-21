@@ -46,7 +46,6 @@ find_symbol (PtrVector* table, const char* data, size_t size)
       if (memcmp(data, symbol->data, size) != 0)
         continue;
 
-      printf("returned a symbol\n");
       return symbol;
     }
 

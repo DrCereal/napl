@@ -29,8 +29,8 @@ _start:
   int $0x80
 
 #This function is still a WIP
-.globl print
-print:
+.globl print2
+print2:
   push %rbp
   mov %rsp, %rbp
 

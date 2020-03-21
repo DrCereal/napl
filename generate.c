@@ -46,34 +46,32 @@ Emit_Extern (char* name, size_t size)
 
   //Make sure that we don't overwrite the extern function or
   //don't know that it's there.
-  Symbol* symbol = create_symbol(name, size, SYMBOL_ORIGINAL);
+  Symbol* symbol = create_symbol(name, size, SYMBOL_FUNCTION);
   ptr_vector_push(symbol_table, (void*)symbol);
 }
 
 void
 Emit_Function_Header (char* name, size_t size)
 {
-  Symbol* symbol = find_symbol(symbol_table, name, size);
+  char* new_name = alloc(NULL, size + 20);
+  memcpy(new_name, name, size);
+  sprintf(new_name + size, "\0");
+
+  Symbol* symbol = find_symbol(symbol_table, new_name, size);
   if (symbol == NULL)
     {
-      symbol = create_symbol(name, size, SYMBOL_ORIGINAL);
+      symbol = create_symbol(new_name, size, SYMBOL_FUNCTION);
       ptr_vector_push(symbol_table, (void*)symbol);
     }
   else
-    {
-      char str[size + 1];
-      memcpy(str, name, size);
-      str[size] = '\0';
-
-      error(-1, 0, "symbol `%s` already exists", str);
-    }
+    error(-1, 0, "symbol `%s` already exists", new_name);
 
   writestr(".global "); 
 
-  writestrn(name, size);
+  writestr(new_name);
   writec('\n');
 
-  writestrn(name, size);
+  writestr(new_name);
   writestr(":\n");
 }
 
@@ -84,20 +82,22 @@ Emit_Function_Return (void)
 }
 
 void
-Emit_Function_Call (char* name, size_t size)
+Emit_Function_Call (char* name, size_t size, size_t var_count)
 {
-  Symbol* symbol = find_symbol(symbol_table, name, size);
-  if (symbol == NULL)
-    {
-      char str[size + 1];
-      memcpy(str, name, size);
-      str[size] = '\0';
+  char* new_name = alloc(NULL, size + 20);
+  memcpy(new_name, name, size);
+  if (var_count != 0)
+    sprintf(new_name + size, "%i\0", var_count);
+  else
+    sprintf(new_name + size, "\0");
 
-      error(-1, 0, "function `%s` is not defined", str);
-    }
+  Symbol* symbol = find_symbol(symbol_table, new_name, size);
+  if (symbol == NULL)
+    error(-1, 0, "function `%s` is not defined", new_name);
 
   writestr("call ");
-  writestrn(name, size);
+  writestr(new_name);
+
   writec('\n');
 }
 

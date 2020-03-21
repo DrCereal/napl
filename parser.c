@@ -211,6 +211,7 @@ VariableInitialization (void)
 }
 
 //<variable> ::= <Number>
+static size_t variable_count = 0;
 bool
 Variable (void)
 {
@@ -220,6 +221,7 @@ Variable (void)
   get_token();
 
   Emit_Variable(token1->number);
+  variable_count++;
 
   delete_token(token1);
   return true;
@@ -229,6 +231,7 @@ Variable (void)
 bool
 VarList (void)
 {
+  variable_count = 0;
   if (!Variable())
     return false;
 
@@ -280,7 +283,7 @@ FunctionCall (void)
     }
 
   if (!failed)
-    Emit_Function_Call(token1->data, token1->data_length);
+    Emit_Function_Call(token1->data, token1->data_length, variable_count);
 
   delete_token(token3);
   delete_token(token2);
