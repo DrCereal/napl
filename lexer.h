@@ -31,6 +31,7 @@ enum token_type
   TOKEN_PAREN_CLOSE,
   TOKEN_PLUS,
   TOKEN_SLASH,
+  TOKEN_STRING,
 };
 
 typedef struct

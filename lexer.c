@@ -82,6 +82,35 @@ restart:
           }
         else
           char_token('/', TOKEN_SLASH);
+      case '"':
+        peekc();  //To prevent a strange compiler error I don't understand.
+
+        char* data = alloc(NULL, 64);
+        int i = 0;
+
+        for(;;)
+          {
+            c = readc();
+            if (c == '"')
+              {
+                token->token_type = TOKEN_STRING;
+                token->data = data;
+                token->data_length = i;
+                return token;
+              }
+            else if (c == '\n')
+              {
+                error_at_line(0, 0, get_file_name(), line_number, \
+                  "expected `\"` token before new line");
+
+                failed = true;
+                return token;
+              }
+
+            if (i % 64 == 0)
+              data = alloc(data, i + 64);
+            data[i++] = c;
+          }
       default:
         if (isdigit(c))
           {

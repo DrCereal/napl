@@ -58,37 +58,29 @@ peekc (void)
 }
 
 void
-writec (const char c)
+write_buffer (Buffer* buffer)
 {
-  if (file_write == NULL)
-    file_write = fopen("a.s", "w");
-
-  if (file_write == NULL)
-    error(-1, errno, "writec()");
-
-  fputc(c, file_write);
+  int ret = fwrite(buffer->data, 1, buffer->index, file_write);
+  if (ret != buffer->index)
+    error(-1, 0, "write_buffer()");
 }
 
 void
-writestr (const char* str)
-{
-  while (*str != '\0') writec(*str++);
-}
-
-void
-writestrn (const char* str, size_t size)
-{
-  for (int i = 0; i < size; i++) writec(str[i]);
-}
-
-void
-open_file (const char* string)
+open_file_read (const char* string)
 {
   file_name = string;
 
   file_read = fopen(file_name, "r");
   //Problem opening file. Terminate.
   if (file_read == NULL)
+    error(-1, errno, "open_file()");
+}
+
+void
+open_file_write (void)
+{
+  file_write = fopen("a.s", "w");
+  if (file_write == NULL)
     error(-1, errno, "open_file()");
 }
 

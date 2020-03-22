@@ -210,19 +210,29 @@ VariableInitialization (void)
   return true;
 }
 
-//<variable> ::= <Number>
+//<variable> ::= <Number> | <String>
 static size_t variable_count = 0;
 bool
 Variable (void)
 {
   Token* token1 = peek_token();
-  if (token1->token_type != TOKEN_NUMBER)
+
+  if (token1->token_type == TOKEN_NUMBER)
+    {
+      get_token();
+
+      Emit_Variable_Number(token1->number);
+    }
+  else if (token1->token_type == TOKEN_STRING)
+    {
+      get_token();
+
+      Emit_Variable_String(token1->data, token1->data_length);
+    }
+  else
     return false;
-  get_token();
 
-  Emit_Variable(token1->number);
   variable_count++;
-
   delete_token(token1);
   return true;
 }
@@ -315,7 +325,7 @@ ReturnStatement (void)
     }
 
   if (!failed)
-    Emit_Return(token2->number);
+    Emit_Function_Return(token2->number);
 
   delete_token(token2);
   delete_token(token1);
@@ -418,7 +428,7 @@ FunctionDefinition (void)
 
       CompoundStatement();
 
-      Emit_Function_Return();
+      Emit_Function_Return(0);
     }
 
   delete_token(token1);
@@ -453,7 +463,9 @@ PreProcessor (void)
   if (!failed)
     {
       if (memcmp(token2->data, "print", token2->data_length) == 0)
-        Emit_Extern(token2->data, token2->data_length);
+        {
+          Emit_Extern("print1", 6);
+        }
     }
 
   delete_token(token2);

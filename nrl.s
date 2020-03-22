@@ -28,33 +28,26 @@ _start:
   mov $1, %eax
   int $0x80
 
-#This function is still a WIP
-.globl print2
-print2:
+#rdi = pointer to string
+.globl print1
+print1:
   push %rbp
-  mov %rsp, %rbp
+  movq %rsp, %rbp
 
-  movq %rdi, -16(%rbp)  #pointer
-  movq %rsi, -24(%rbp)  #size
-
+  movq %rdi, %rcx
+.loop:
   movq $4, %rax
   movq $1, %rbx
-
-  movq -16(%rbp), %rcx
-  cmp $0, %rcx
-  je print_nl
-  movq -24(%rbp), %rdx
-  jmp print_ret
-
-print_nl:
-  movq $new_line, %rcx
   movq $1, %rdx
+  cmpb $0, (%rcx)
+  je .ret
 
-print_ret:
+  pushq %rcx
   int $0x80
+  popq %rcx
+
+  addq $1, %rcx
+  jmp .loop
+.ret:
   pop %rbp
   ret
-
-.section .data
-new_line:
-  .ascii "\n"

@@ -35,15 +35,13 @@ create_symbol (char* data, size_t size,
 }
 
 Symbol*
-find_symbol (PtrVector* table, const char* data, size_t size)
+find_symbol (PtrVector* table, const char* data)
 {
   Symbol* symbol;
   for (int i = 0; i < table->vector_size; i++)
     {
       symbol = (Symbol*)table->ptr[i];
-      if (symbol->data_length != size)
-        continue;
-      if (memcmp(data, symbol->data, size) != 0)
+      if (strcmp(data, symbol->data) != 0)
         continue;
 
       return symbol;

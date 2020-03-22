@@ -17,6 +17,6 @@ typedef struct
 } Symbol;
 
 Symbol* create_symbol(char* data, size_t size, int symbol_type);
-Symbol* find_symbol(PtrVector* vector, const char* data, size_t size);
+Symbol* find_symbol(PtrVector* vector, const char* data);
 
 #endif

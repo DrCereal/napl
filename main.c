@@ -27,12 +27,14 @@ main (int argc, char** argv)
 {
   initialize_lexer();
   initialize_generate();
-  open_file("test.napl"); 
 
-  Emit_Header();
+  open_file_read("test.napl"); 
+  open_file_write();
 
   //parse
   parse();
+
+  write_emission();
 
   return 0;
 }

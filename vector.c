@@ -76,3 +76,34 @@ ptr_vector_pop (PtrVector* vector)
 
   return vector->ptr[--vector->vector_size];
 }
+
+Buffer*
+create_buffer (void)
+{
+  Buffer* buffer = alloc(NULL, sizeof(Buffer));
+  buffer->data = alloc(NULL, 4096);
+  buffer->index = 0;
+  buffer->size = 4096;
+
+  return buffer;
+}
+
+void
+buffer_addc (Buffer* buffer, char c)
+{
+  buffer->data[buffer->index++] = c;
+  if (buffer->index == buffer->size)
+    {
+      size_t new_size = 2 * buffer->size;
+
+      buffer->data = alloc(buffer->data, new_size);
+      buffer->size = new_size;
+    }
+}
+
+void
+buffer_addstr (Buffer* buffer, char* str)
+{
+  for (int i = 0; str[i]; i++)
+    buffer_addc(buffer, str[i]);
+}
